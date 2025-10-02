@@ -1,0 +1,291 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع مفردات تفاعلي - Teacher Samia Soliman</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #007bff;
+            --secondary-color: #6c757d;
+            --accent-color: #28a745;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-color);
+            line-height: 1.6;
+            color: #343a40;
+            text-align: right;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        #controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        #searchBox {
+            padding: 10px;
+            font-size: 1rem;
+            width: 250px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        #toggleTheme {
+            padding: 10px 20px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #toggleTheme:hover {
+            opacity: 0.9;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .word-card {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 150px;
+            border-right: 5px solid var(--accent-color);
+            position: relative;
+        }
+
+        .word-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .word-card::after {
+            content: "🔊";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 1.2rem;
+            opacity: 0.7;
+        }
+
+        .word-card:hover::after {
+            opacity: 1;
+        }
+
+        .english-word {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            text-align: left;
+            font-family: Arial, sans-serif;
+        }
+
+        .arabic-translation {
+            font-size: 1.2rem;
+            color: var(--secondary-color);
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 15px 0;
+            background-color: #343a40;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        body.dark {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --primary-color: #90caf9;
+            --secondary-color: #cccccc;
+            color: white;
+        }
+
+        body.dark footer {
+            background-color: #000;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 2rem;
+            }
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+            .english-word {
+                font-size: 1.5rem;
+            }
+            .arabic-translation {
+                font-size: 1.1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Teacher Samia Soliman</h1>
+        <p>مجموعة من المفردات الإنجليزية الشائعة مترجمة إلى اللغة العربية</p>
+    </header>
+
+    <section id="controls">
+        <input type="text" id="searchBox" placeholder="ابحث عن كلمة...">
+        <button id="toggleTheme">🌙 وضع داكن</button>
+    </section>
+
+    <main class="card-grid" id="wordContainer"></main>
+
+    <footer>
+        <p>&copy; 2025 Teacher Samia Soliman. جميع الحقوق محفوظة.</p>
+    </footer>
+
+    <script>
+        const vocabulary = [
+            { en: "personal", ar: "شخصي" },
+            { en: "identity", ar: "هوية" },
+            { en: "background", ar: "خلفية" },
+            { en: "beliefs", ar: "معتقدات" },
+            { en: "individually", ar: "بشكل فردي" },
+            { en: "curiosity", ar: "فضول" },
+            { en: "strength", ar: "قوة" },
+            { en: "change", ar: "يغير / تغيير" },
+            { en: "value", ar: "يقيم / قيمة" },
+            { en: "support", ar: "يساند" },
+            { en: "self-discovery", ar: "اكتشاف الذات" },
+            { en: "growth", ar: "النمو" },
+            { en: "self-respect", ar: "احترام الذات" },
+            { en: "unique", ar: "فريد / مميز" },
+            { en: "heart surgeon", ar: "جراح قلب" },
+            { en: "confidence", ar: "الثقة" },
+            { en: "stressed", ar: "مضغوط" },
+            { en: "succeed", ar: "ينجح" },
+            { en: "face", ar: "يواجه" },
+            { en: "encourage", ar: "يشجع" },
+            { en: "weakness", ar: "ضعف" },
+            { en: "purpose", ar: "غرض / هدف" },
+            { en: "character", ar: "شخصية" },
+            { en: "patient", ar: "صبور / مريض" },
+            { en: "experience", ar: "خبرة / تجربة شخصية" },
+            { en: "explore", ar: "يستكشف" },
+            { en: "according to", ar: "طبقاً لـ" },
+            { en: "even if", ar: "حتى لو" },
+            { en: "disease", ar: "مرض" },
+            { en: "inspiring", ar: "ملهم" },
+            { en: "fair", ar: "معرض / عادل" },
+            { en: "medicine", ar: "طب / دواء" },
+            { en: "opinion", ar: "رأي" },
+            { en: "celebrate", ar: "يحتفل" },
+            { en: "ideas", ar: "أفكار" },
+            { en: "different", ar: "مختلف" },
+            { en: "real", ar: "حقيقي" },
+            { en: "dreams", ar: "أحلام" },
+            { en: "volunteering", ar: "التطوع" },
+            { en: "traditions", ar: "تقاليد" },
+            { en: "journey", ar: "رحلة طويلة" },
+            { en: "personality", ar: "شخصية" },
+            { en: "kindness", ar: "الطيبة / العطف" },
+            { en: "competition", ar: "مسابقة" },
+            { en: "wonder", ar: "يتسائل" },
+            { en: "influence", ar: "تأثير" }
+        ];
+
+        const wordContainer = document.getElementById('wordContainer');
+
+        function speak(text) {
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                if (speechSynthesis.speaking) speechSynthesis.cancel();
+                speechSynthesis.speak(utterance);
+            } else {
+                alert("وظيفة النطق غير مدعومة في متصفحك.");
+            }
+        }
+
+        function createWordCards() {
+            const fragment = document.createDocumentFragment();
+            vocabulary.forEach(word => {
+                const card = document.createElement('div');
+                card.classList.add('word-card');
+                card.setAttribute('tabindex', '0');
+                card.addEventListener('click', () => speak(word.en));
+
+                const enDiv = document.createElement('div');
+                enDiv.classList.add('english-word');
+                enDiv.textContent = word.en;
+
+                const arDiv = document.createElement('div');
+                arDiv.classList.add('arabic-translation');
+                arDiv.textContent = word.ar;
+
+                card.appendChild(enDiv);
+                card.appendChild(arDiv);
+                fragment.appendChild(card);
+            });
+            wordContainer.appendChild(fragment);
+        }
+
+        window.onload = createWordCards;
+
+        document.getElementById('searchBox').addEventListener('input', function() {
+            const term = this.value.toLowerCase();
+            document.querySelectorAll('.word-card').forEach(card => {
+                const en = card.querySelector('.english-word').textContent.toLowerCase();
+                const ar = card.querySelector('.arabic-translation').textContent.toLowerCase();
+                card.style.display = (en.includes(term) || ar.includes(term)) ? 'block' : 'none';
+            });
+        });
+
+        document.getElementById('toggleTheme').addEventListener('click', () => {
+            document.body.classList.toggle('dark');
+        });
+    </script>
+</body>
+</html>
